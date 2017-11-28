@@ -14,7 +14,8 @@
    viewBox="0 0 1240.1575 620.07873"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="gradient_descent.svg">
   <defs
      id="defs4">
     <marker
@@ -54,7 +55,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0361386"
-     inkscape:cx="351.09412"
+     inkscape:cx="168.68609"
      inkscape:cy="285.51362"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -73,7 +74,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
