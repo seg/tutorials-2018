@@ -129,9 +129,9 @@ for j=1:maxiter
 	# Model predicted data for subset of sources
 	i = randperm(d_obs.nsrc)[1:batchsize]
 	d_pred = Pr[i]*F[i]*Ps[i]'*q[i]
-	p = zeros(Float32, info.n)
-	
+		
 	# GN update direction
+	p = zeros(Float32, info.n)
 	for k=1:maxiter_GN
 		r = J[i]*d - (d_pred - d_obs[i])
 		g_gn = J[i]'*r
