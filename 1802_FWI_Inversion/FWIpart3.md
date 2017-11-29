@@ -127,17 +127,17 @@ In cases where we have already made decent progress towards the solution or star
 for j=1:maxiter
 
 	# Model predicted data for subset of sources
-    i = randperm(d_obs.nsrc)[1:batchsize]
-    d_pred = Pr[i]*F[i]*Ps[i]'*q[i]
-    p = zeros(Float32, info.n)
+	i = randperm(d_obs.nsrc)[1:batchsize]
+	d_pred = Pr[i]*F[i]*Ps[i]'*q[i]
+	p = zeros(Float32, info.n)
 	
 	# GN update direction
-    for k=1:maxiter_GN
-      r = J[i]*d - (d_pred - d_obs[i])
-      g_gn = J[i]'*r
-      t = norm(r)^2/norm(g_gn)^2
-      p -= t*g_gn
-    end
+	for k=1:maxiter_GN
+		r = J[i]*d - (d_pred - d_obs[i])
+		g_gn = J[i]'*r
+		t = norm(r)^2/norm(g_gn)^2	# step size
+		p -= t*g_gn
+	end
 	
 	# update model and bound constraints
 	model.m = proj(model0.m - reshape(p, model.n))	# alpha=1
