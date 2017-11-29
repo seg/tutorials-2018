@@ -115,26 +115,32 @@ end
 
 The function `backtracking_linesearch` performs an approximate line search for a value of `alpha` that leads to a sufficient decrease of the FWI function value (Armijo condition) [@nocedal2006]. While the convergence rate of this algorithm depends on the objective function, it is at best linear for full GD and sub-linear for stochastic GD. Without having to compute second derivatives, this rate can be improved to super-linear with the non-linear conjugate gradient method (CG). The CG algorithm only requires additional storage of the previous gradient `g_prev` and update direction `d_prev` (both are set to zero for the first iteration). A new search direction is computed as a linear combination of the current gradient and previous search direction: $\mathbf{p}_j = -\mathbf{g}_j + \beta \mathbf{p}_{j-1}$, with $\beta$ given by one of the various CG update rules such as $\beta = \frac{\mathbf{g}_j^\top (\mathbf{g}_j - \mathbf{g}_{j-1}}{\mathbf{g}_j^\top \mathbf{g}_j}$ (Polak-Ribiere) [@nocedal2006]. In Julia, we can easily modify our previous algorithm by inserting these two lines in front of the line search (see **fwi_overthrust_cg.jl** for the full example):
 
-```
+```julia
   beta = dot(g, g - g_prev)/dot(g_prev, g_prev)	# Polak-Ribiere
   p = -g + beta*p_prev
 ```
 
 In cases where we have already made decent progress towards the solution or start with a very good initial model, convergence can be further improved by using second order methods, i.e. algorithms that use the curvature information of the objective function, such as Newton's method or one of its derivatives. For large-scale problems such as FWI, the exact Newton's method is prohibitively expensive, since it involves computing the second derivative matrix `$\mathbf{H}$ (Hessian) and solving a linear system $\mathbf{H} \mathbf{p} = \mathbf{g}$ for obtaining a search direction. For least-squares problems, the full hessian can be approximated by the Gauss-Newton hessian $\mathbf{J}^\top \mathbf{J}$, but the matrix still needs to be inverted for finding a search direction. Since the GN hessian is ill-conditioned, it is usually preferable to solve the overdetermined linear system $\mathbf{J} \mathbf{p} = \mathbf{d}^\mathrm{pred}_k - \mathbf{d}^\mathrm{obs}_k$ instead. In practice, we only perform a few GD iteration to approximately solve the least squares subproblem. For FWI with the (truncated) GN we modify our algorithm in the following way:
 
-```
+```julia
 # Gauss-Newton method
 for j=1:maxiter
+
+	# Model predicted data for subset of sources
     i = randperm(d_obs.nsrc)[1:batchsize]
     d_pred = Pr[i]*F[i]*Ps[i]'*q[i]
-    d = zeros(Float32, info.n)
+    p = zeros(Float32, info.n)
+	
+	# GN update direction
     for k=1:maxiter_GN
       r = J[i]*d - (d_pred - d_obs[i])
       g_gn = J[i]'*r
       t = norm(r)^2/norm(g_gn)^2
-      d -= t*g_gn
+      p -= t*g_gn
     end
-    model.m = proj(model0.m - reshape(d, model.n))	# alpha=1
+	
+	# update model and bound constraints
+    model.m = proj(model0.m - reshape(p, model.n))	# alpha=1
 end
 ```
 
