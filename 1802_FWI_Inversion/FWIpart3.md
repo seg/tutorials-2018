@@ -140,7 +140,7 @@ for j=1:maxiter
     end
 	
 	# update model and bound constraints
-    model.m = proj(model0.m - reshape(p, model.n))	# alpha=1
+	model.m = proj(model0.m - reshape(p, model.n))	# alpha=1
 end
 ```
 
