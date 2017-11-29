@@ -133,14 +133,14 @@ for j=1:maxiter
 	# GN update direction
 	p = zeros(Float32, info.n)
 	for k=1:maxiter_GN
-		r = J[i]*d - (d_pred - d_obs[i])
+		r = J[i]*p - (d_pred - d_obs[i])
 		g_gn = J[i]'*r
 		t = norm(r)^2/norm(g_gn)^2	# step size
 		p -= t*g_gn
 	end
 	
 	# update model and bound constraints
-	model.m = proj(model0.m - reshape(p, model.n))	# alpha=1
+	model.m = proj(model0.m + reshape(p, model.n))	# alpha=1
 end
 ```
 
