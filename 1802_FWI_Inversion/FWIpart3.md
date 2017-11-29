@@ -139,7 +139,7 @@ end
 ```
 
 #### Figure: {#result_GN}
-![](fwi_result.pdf){width=80%}
+![](fwi_result.png){width=80%}
 : Recovered velocity model after 10 iterations of the Gauss-Newton method as shown above, with 10 iterations for the least squares subproblem.
 
 An alternative to (Gauss-) Newton methods are Quasi-Newton methods, which build up an approximation of the Hessian from previous gradients only and require no additional PDE solves or matrix inversions. Implementing an efficient and correct version of this method, such as the L-BFGS algorithm, exceeds a few lines of code and we therefore leave this exercise to the reader. Instead of implementing more complicated algorithms by hand, it is also possible to interface third-party Julia optimization libraries and an example for this is given in the notebook **fwi_overthrust_minConf.jl**. Even though all examples shown here are two-dimensional only, jSeis can be used for 3D modeling and inversion without having to change the code, since the number of dimensions are automatically inferred from the velocity model and data dimensions.
