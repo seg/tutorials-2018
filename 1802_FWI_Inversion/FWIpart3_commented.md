@@ -47,7 +47,7 @@ where $\nabla f(\mathbf{m}_0)$ is the gradient as implemented in part two and $\
 
 Newton's method converges very fast to the solution of the FWI objective function, but comes at the cost of having to compute and invert the Hessian matrix [@nocedal2006]. For least squares problems, such as FWI, the Hessian can be approximated by the Gauss-Newton (GN) Hessian $\mathbf{J}^\top \mathbf{J}$, where $\mathbf{J}$ is the Jacobian matrix, which is the partial derivative of the forward modeling operator $\mathbf{F}(\mathbf{m},\mathbf{q})$ with respect to $\mathbf{m}$. The Jacobian can also be used to express the gradient of the FWI objective function as $\nabla f(\mathbf{m}_0) = \mathbf{J}^\top (\mathbf{d}^\mathrm{pred}_i - \mathbf{d}_i^\mathrm{obs})$, where $\mathbf{J}^\top$ is the adjoint (transposed) Jacobian. This is useful, because we now have a set of operators $\mathbf{F}, \mathbf{J}$ and $\mathbf{H}_{GN}=\mathbf{J}^\top\mathbf{J}$, through which we can express both first and second order optimization algorithms for FWI. However, forming these matrices explicitly is not possible, since they can become extremely large. Luckily, we only need the action of these operators on vectors, which allows us to implement these operators matrix-free. In the following section we will demonstrate how to set up these operators in our JUDI software framework and to how to use them for implementing FWI algorithms.
 
-## FWI with JUDI and SeisIO
+## The Julia Devito Inversion framework and SeisIO
 
 [SeisIO]:https://github.com/slimgroup/SeisIO.jl
 
