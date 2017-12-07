@@ -1,7 +1,7 @@
 ---
 title: Full-Waveform Inversion --- Part 3``:`` Optimization
 author: |
-	Philipp Witte^1^\*, Mathias Louboutin^1^, Keegan Lensing^1^, Michael Lange^2^, Navjot Kukreja^2^, Fabio Luporini^2^, Gerard Gorman^2^, and Felix J. Herrmann^1,3^\
+	Philipp Witte^1^\*, Mathias Louboutin^1^, Keegan Lensink^1^, Michael Lange^2^, Navjot Kukreja^2^, Fabio Luporini^2^, Gerard Gorman^2^, and Felix J. Herrmann^1,3^\
 	^1^ Seismic Laboratory for Imaging and Modeling (SLIM), The University of British Columbia \
 	^2^ Imperial College London, London, UK\
 	^3^ now at Georgia Institute of Technology, USA \
@@ -49,7 +49,7 @@ Newton's method converges very fast to the solution of the FWI objective functio
 
 The Julia Devito Inversion framework is a parallel matrix-free linear operator library for seismic modeling and inversion based on Devito and [SeisIO], a performant Julia package for reading and writing large data volumes in SEG-Y format. JUDI allows us to implement seismic inversion algorithms as linear algebra operations, enabling rapid translations of FWI algorithms to executable Julia code. The underlying wave equations are set up and solved using Devito, as described in the first two tutorials, and are interfaced from Julia using the [PyCall](https://github.com/JuliaPy/PyCall.jl) package [@Johnson2017]. 
 
-We start our demonstration by reading the initial model and our data set, which consists of ``97`` shot records and was generated with an excerpt from the 2D Overthrust model. For reading and writing SEG-Y data, JUDI uses the SeisIO package [@lensing2017], a sophisticated SEG-Y reader that allows us to scan large 3D data sets for creating look-up tables with header summaries. However, since our data set is relatively small, we will directly load the full file into memory. The `segy_read` command takes the file name as an input and returns a dense data block, from which we construct a JUDI vector for the observed data:
+We start our demonstration by reading the initial model and our data set, which consists of ``97`` shot records and was generated with an excerpt from the 2D Overthrust model. For reading and writing SEG-Y data, JUDI uses the SeisIO package, a sophisticated SEG-Y reader that allows us to scan large 3D data sets for creating look-up tables with header summaries. However, since our data set is relatively small, we will directly load the full file into memory. The `segy_read` command takes the file name as an input and returns a dense data block, from which we construct a JUDI vector for the observed data:
 
 ```julia
   block = segy_read("overthrust_2d_shots.segy")
