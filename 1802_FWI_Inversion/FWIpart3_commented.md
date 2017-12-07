@@ -139,7 +139,7 @@ As discussed earlier, the convergence rate of GD depends on the objective functi
 for j=1:maxiter
 
 	# Model predicted data 
-	d_pred = Pr*F*Ps'*q
+	d_pred = Pr*Ainv*Ps'*q
 		
 	# GN update direction
 	p = lsqr(J, d_pred - d_obs; maxiter=8)
