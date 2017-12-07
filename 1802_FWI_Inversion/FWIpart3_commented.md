@@ -57,7 +57,7 @@ We start our demonstration by {==reading==} {>>Is there a command for that in th
 
 ```julia
   block = segy_read("overthrust_2d_shots.segy")
-  d_obs = joData(block)
+  d_obs = judiVector(block)
   imshow(d_obs.data[15])
 ```
 
@@ -67,13 +67,15 @@ We start our demonstration by {==reading==} {>>Is there a command for that in th
 
 The `d_obs` object is an abstract vector, which can be used like a regular Julia vector {~~, i.e. ~>so~~} we can compute {++ norms ++} via `norm(d_obs)` or {++ the inner product via ++} `dot(d_obs, d_obs)`. The vector `d_obs` looks like a vectorized version of the seismic data, but contains the shot records in their original dimension {-- (`size(d_obs)=XXX`) --}{>>This would give you the dimensions of the vector, not the original data<<}. Shot records can be accessed via their respective shot number with `d_obs.data[shot_no]`, while the header information can be accessed with `d_obs.geometry`. Since a {--seismic--} SEG-Y file contains the source coordinates, but not the source wavelet itself, we extract the source geometry from our file and then manually set up a source vector `q` with a ``8`` Hertz Ricker wavelet:
 
-{>> Aligning multiple lines of code with spaces is considered bad coding style and should be avoided. This is also consisten with the previous tutorials.<<}
+{>> PW: Aligning multiple lines of code with spaces is considered bad coding style and should be avoided. This is also consisten with the previous tutorials.<<}
 
 ```julia
   src_geometry = Geometry(block)
   src_data = ricker_wavelet(src_geometry.t[1], src_geometry.dt[1], 0.008)
-  q = joData(src_geometry, src_data)
+  q = judiVector(src_geometry, src_data)
 ```
+
+{>>PW: Discussing which operators are coordinate-free and which ones are not, might be a bit much for the tutorial, so if that's okay I'll leave it out. Will be part of the Julia paper though. <<}
 
 Since our data set consists of ``97`` shot records, both `d_obs` and `q` contain the data and geometries for all source positions. We can check the number of source positions with `d_obs.nsrc` and `q.nsrc` and we can extract the part of the vector that corresponds to one or multiple shots with `d_obs[shot_no], q[shot_no]`. 
 
@@ -82,17 +84,17 @@ We will now set up the forward modeling operator $F(\mathbf{m},\mathbf{q})$ in t
 ```julia
   ntComp = get_computational_nt(q.geometry, d_obs.geometry, model0)
   info = Info(prod(model0.n), d_obs.nsrc, ntComp)
-  Pr = joProjection(info, d_obs.geometry)
-  Ps = joProjection(info, q.geometry)
-  Ainv = joModeling(info, model)
+  Pr = judiProjection(info, d_obs.geometry)
+  Ps = judiProjection(info, q.geometry)
+  Ainv = judiModeling(info, model)
 ```
 
-We can forward model all 97 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression ``F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}`` by virtue of the instantiation `Ainv = joModeling(info, model)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are {++ automatically ++} parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. {--Accordingly--} **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*F'*Pr'*d_obs`, {++exemplifying the advantages of casting FWI in a proper computational linear algebra framework.++} 
+We can forward model all 97 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression ``F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}`` by virtue of the instantiation `Ainv = judiModeling(info, model)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are {++ automatically ++} parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. {--Accordingly--} **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*F'*Pr'*d_obs`, {++exemplifying the advantages of casting FWI in a proper computational linear algebra framework.++} 
 
 Finally, we set up the {++ matrix-free ++} Jacobian operator `J` and the Gauss-Newton Hessian `J'*J`. As mentioned in the introduction, `J` is the partial derivative of the forward modeling operator, so `J` is directly constructed from our modeling operator `Pr*Ainv*Ps'` and a specified source vector `q`:
 
 ```julia
-  J = joJacobian(Pr*Ainv*Ps',q)
+  J = judiJacobian(Pr*Ainv*Ps',q)
   H_GN = J'*J    # Gauss-Newton Hessian
   i = 10	# choose shot no. 10
   d_pred = Pr[i]*Ainv[i]*Ps[i]'*q[i]

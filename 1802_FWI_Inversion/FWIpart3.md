@@ -53,7 +53,7 @@ We start our demonstration by reading the initial model and our data set, which 
 
 ```julia
   block = segy_read("overthrust_2d_shots.segy")
-  d_obs = joData(block)
+  d_obs = judiVector(block)
   imshow(d_obs.data[15])
 ```
 
@@ -66,7 +66,7 @@ The `d_obs` object is an abstract vector, which can be used like a regular Julia
 ```julia
   src_geometry = Geometry(block)
   src_data = ricker_wavelet(src_geometry.t[1], src_geometry.dt[1], 0.008)
-  q = joData(src_geometry, src_data)
+  q = judiVector(src_geometry, src_data)
 ```
 
 Since our data set consists of ``97`` shot records, both `d_obs` and `q` contain the data and geometries for all source positions. We can check the number of source positions with `d_obs.nsrc` and `q.nsrc` and we can extract the part of the vector that corresponds to one or multiple shots with `d_obs[shot_no], q[shot_no]`. 
@@ -76,17 +76,17 @@ We will now set up the forward modeling operator $F(\mathbf{m},\mathbf{q})$ in t
 ```julia
   ntComp = get_computational_nt(q.geometry, d_obs.geometry, model0)
   info = Info(prod(model0.n), d_obs.nsrc, ntComp)
-  Pr = joProjection(info, d_obs.geometry)
-  Ps = joProjection(info, q.geometry)
-  Ainv = joModeling(info, model)
+  Pr = judiProjection(info, d_obs.geometry)
+  Ps = judiProjection(info, q.geometry)
+  Ainv = judiModeling(info, model)
 ```
 
-We can forward model all 97 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression ``F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}`` by virtue of the instantiation `Ainv = joModeling(info, model)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are automatically parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*F'*Pr'*d_obs`, exemplifying the advantages of casting FWI in a proper computational linear algebra framework.
+We can forward model all 97 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression ``F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}`` by virtue of the instantiation `Ainv = judiModeling(info, model)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are automatically parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*F'*Pr'*d_obs`, exemplifying the advantages of casting FWI in a proper computational linear algebra framework.
 
 Finally, we set up the matrix-free Jacobian operator `J` and the Gauss-Newton Hessian `J'*J`. As mentioned in the introduction, `J` is the partial derivative of the forward modeling operator, so `J` is directly constructed from our modeling operator `Pr*Ainv*Ps'` and a specified source vector `q`:
 
 ```julia
-  J = joJacobian(Pr*Ainv*Ps',q)
+  J = judiJacobian(Pr*Ainv*Ps',q)
   H_GN = J'*J    # Gauss-Newton Hessian
   i = 10	# choose shot no. 10
   d_pred = Pr[i]*Ainv[i]*Ps[i]'*q[i]
