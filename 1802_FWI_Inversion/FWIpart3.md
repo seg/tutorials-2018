@@ -16,9 +16,9 @@ This tutorial is the third part of a full-waveform inversion (FWI) tutorial seri
 
 [Devito]:http://www.opesci.org/devito-public
 [Julia]:https://julialang.org
-[JUDI]:https://github.com/slimgroup/JUDI.jl/tree/master/src
+[JUDI]:https://github.com/slimgroup/JUDI.jl
 
-Full-waveform inversion is a very challenging problem from the optimization perspective, since not only do we need to solve expensive wave equations for a large number of source positions and iterations, but the FWI objective function is known to have (oftentimes many) local minima and saddle points related to cycle skipping. Furthermore, the problem is non-unique and it is generally not possible to unambiguously recover the parametrization of the subsurface from the given data alone, making FWI an active field of research [e.g. @vanleeuwen2013; @warner2014; @Peters2017]. This tutorial demonstrates how we can set up a basic FWI framework with gradient-based optimization algorithms, such as the steepest descent and the Gauss-Newton method [@nocedal2006]. Since building a full FWI framework with routines for data IO and parallelization is outside the scope of a single tutorial, we will implement our inversion framework with the [Julia Devito Inversion framework](https://github.com/slimgroup/JUDI.jl/tree/master/src) (JUDI), a parallel software package for seismic modeling and inversion in [Julia] [@Bezanson2012]. JUDI provides mathematical abstractions and functions wrappers that allow us to implement wave-equation based inversions such as FWI that closely follow the mathematical notation, while using Devito's automatic code generation for solving the underlying wave equations.
+Full-waveform inversion is a very challenging problem from the optimization perspective, since not only do we need to solve expensive wave equations for a large number of source positions and iterations, but the FWI objective function is known to have (oftentimes many) local minima and saddle points related to cycle skipping. Furthermore, the problem is non-unique and it is generally not possible to unambiguously recover the parametrization of the subsurface from the given data alone, making FWI an active field of research [e.g. @vanleeuwen2013; @warner2014; @Peters2017]. This tutorial demonstrates how we can set up a basic FWI framework with gradient-based optimization algorithms, such as the steepest descent and the Gauss-Newton method [@nocedal2006]. Since building a full FWI framework with routines for data IO and parallelization is outside the scope of a single tutorial, we will implement our inversion framework with the [Julia Devito Inversion framework](https://github.com/slimgroup/JUDI.jl) (JUDI), a parallel software package for seismic modeling and inversion in [Julia] [@Bezanson2012]. JUDI provides mathematical abstractions and functions wrappers that allow us to implement wave-equation based inversions such as FWI that closely follow the mathematical notation, while using Devito's automatic code generation for solving the underlying wave equations.
 
 ## Optimizing the full-waveform inversion objective function
 
@@ -49,7 +49,7 @@ Newton's method converges very fast to the solution of the FWI objective functio
 
 The Julia Devito Inversion framework is a parallel matrix-free linear operator library for seismic modeling and inversion based on Devito and [SeisIO], a performant Julia package for reading and writing large data volumes in SEG-Y format. JUDI allows us to implement seismic inversion algorithms as linear algebra operations, enabling rapid translations of FWI algorithms to executable Julia code. The underlying wave equations are set up and solved using Devito, as described in the first two tutorials, and are interfaced from Julia using the [PyCall](https://github.com/JuliaPy/PyCall.jl) package [@Johnson2017]. 
 
-We start our demonstration by reading the initial model and our data set, which consists of ``97`` shot records and was generated with an excerpt from the 2D Overthrust model. For reading and writing SEG-Y data, JUDI uses the SeisIO package, a sophisticated SEG-Y reader that allows us to scan large 3D data sets for creating look-up tables with header summaries. However, since our data set is relatively small, we will directly load the full file into memory. The `segy_read` command takes the file name as an input and returns a dense data block, from which we construct a JUDI vector for the observed data:
+We start our demonstration by reading the initial model and our data set, which consists of $31$ shot records and was generated with an excerpt from the 2D Overthrust model. For reading and writing SEG-Y data, JUDI uses the SeisIO package, a sophisticated SEG-Y reader that allows us to scan large 3D data sets for creating look-up tables with header summaries. However, since our data set is relatively small, we will directly load the full file into memory. The `segy_read` command takes the file name as an input and returns a dense data block, from which we construct a JUDI vector for the observed data:
 
 ```julia
   block = segy_read("overthrust_2d_shots.segy")
@@ -61,7 +61,7 @@ We start our demonstration by reading the initial model and our data set, which 
 ![](Figures/observed_data.png){width=60%}
 : Observed shot record number 15.
 
-The `d_obs` object is an abstract vector, which can be used like a regular Julia vector so we can compute norms via `norm(d_obs)` or the inner product via `dot(d_obs, d_obs)`. The vector `d_obs` looks like a vectorized version of the seismic data, but contains the shot records in their original dimension. Shot records can be accessed via their respective shot number with `d_obs.data[shot_no]`, while the header information can be accessed with `d_obs.geometry`. Since a SEG-Y file contains the source coordinates, but not the source wavelet itself, we extract the source geometry from our file and then manually set up a source vector `q` with a ``8`` Hertz Ricker wavelet:
+The `d_obs` object is an abstract vector, which can be used like a regular Julia vector so we can compute norms via `norm(d_obs)` or the inner product via `dot(d_obs, d_obs)`. The vector `d_obs` looks like a vectorized version of the seismic data, but contains the shot records in their original dimension. Shot records can be accessed via their respective shot number with `d_obs.data[shot_no]`, while the header information can be accessed with `d_obs.geometry`. Since a SEG-Y file contains the source coordinates, but not the source wavelet itself, we extract the source geometry from our file and then manually set up a source vector `q` with a $8$ Hertz Ricker wavelet:
 
 ```julia
   src_geometry = Geometry(block)
@@ -69,7 +69,7 @@ The `d_obs` object is an abstract vector, which can be used like a regular Julia
   q = judiVector(src_geometry, src_data)
 ```
 
-Since our data set consists of ``97`` shot records, both `d_obs` and `q` contain the data and geometries for all source positions. We can check the number of source positions with `d_obs.nsrc` and `q.nsrc` and we can extract the part of the vector that corresponds to one or multiple shots with `d_obs[shot_no], q[shot_no]`. 
+Since our data set consists of $31$ shot records, both `d_obs` and `q` contain the data and geometries for all source positions. We can check the number of source positions with `d_obs.nsrc` and `q.nsrc` and we can extract the part of the vector that corresponds to one or multiple shots with `d_obs[shot_no], q[shot_no]`. 
 
 We will now set up the forward modeling operator $F(\mathbf{m},\mathbf{q})$ in terms of matrix-free operators for the inverse wave equation $\mathbf{A}(\mathbf{m})^{-1}$, where $\mathbf{m}$ is the current model, and source/receiver injection and sampling operators $\mathbf{P}_s$ and $\mathbf{P}_r$. This allows us to express modeling of a shot record as `d_pred = Pr*Ainv*Ps'*q`. The `Pr` and `Ps` can be considered as matrix-free operators around the Devito sparse point injection and interpolation [@louboutin2017fwi]. Multiplications with `Ps` and `Pr` represent sampling the wavefield at source/receiver locations, while their adjoints `Pr', Ps'` denote injecting either shot records or source wavelets into the computational grid. Since the dimensions of the inverse wave equation operator depend on the number of computational time steps, we calculate this number using the `get_computational_nt` function and set up an `info` object that contains some dimensionality information required by all operators. The projection and modelling operators can then be set up in Julia in the following way:
 
@@ -78,10 +78,10 @@ We will now set up the forward modeling operator $F(\mathbf{m},\mathbf{q})$ in t
   info = Info(prod(model0.n), d_obs.nsrc, ntComp)
   Pr = judiProjection(info, d_obs.geometry)
   Ps = judiProjection(info, q.geometry)
-  Ainv = judiModeling(info, model)
+  Ainv = judiModeling(info, model0)
 ```
 
-We can forward model all 97 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression ``F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}`` by virtue of the instantiation `Ainv = judiModeling(info, model)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are automatically parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*F'*Pr'*d_obs`, exemplifying the advantages of casting FWI in a proper computational linear algebra framework.
+We can forward model all 31 predicted shot records by running `d_pred = Pr*Ainv*Ps'*q` from the Julia command line, which is equivalent to the mathematical expression $F(\mathbf{m};\mathbf{q})=\mathbf{P}_r\mathbf{A}^{-1}(\mathbf{m})\mathbf{P}_s^\top\mathbf{q}$ by virtue of the instantiation `Ainv = judiModeling(info, model0)`, which makes the wave equation solver implicitly dependent on the `model`. If we started our Julia session with multiple CPU cores or nodes, the wave equation solves are automatically parallelized over source locations and all shots are collected in the `d_pred` vector. We can also model a single or subset of shots by indexing the operators with the respective shot numbers. E.g. if we want to model the first two shots, we define `i=[1,2]` and then run `d_sub = Pr[i]*Ainv[i]*Ps[i]'*q[i]`. **Remark.** If we want to solve an adjoint wave equation with the observed data as the adjoint source and restrictions of the wavefields back to the source locations, we can {++ simply ++} run `qad = Ps*Ainv'*Pr'*d_obs`, exemplifying the advantages of casting FWI in a proper computational linear algebra framework.
 
 Finally, we set up the matrix-free Jacobian operator `J` and the Gauss-Newton Hessian `J'*J`. As mentioned in the introduction, `J` is the partial derivative of the forward modeling operator, so `J` is directly constructed from our modeling operator `Pr*Ainv*Ps'` and a specified source vector `q`:
 
@@ -93,16 +93,16 @@ Finally, we set up the matrix-free Jacobian operator `J` and the Gauss-Newton He
   g = J[i]'*(d_pred - d_obs[i])    # FWI gradient
 ```
 
-In the context of seismic inversion, the Jacobian is also called the linearized modeling or demigration operator and its adjoint `J'` is the migration operator. One draw back of this notation is, that the forward wavefields for the gradient calculation have to be recomputed, since the forward modeling operator only returns the shot records and not the complete wavefields. For this reason, JUDI has an additional function for computing the gradients of the FWI objective function `f,g = fwi_objective(model,q[i],d_obs[i])`, which takes the current model, source and data vectors as an input and computes the objective value and gradient in parallel and without having to recompute the forward wavefields.
+In the context of seismic inversion, the Jacobian is also called the linearized modeling or demigration operator and its adjoint `J'` is the migration operator. One draw back of this notation is, that the forward wavefields for the gradient calculation have to be recomputed, since the forward modeling operator only returns the shot records and not the complete wavefields. For this reason, JUDI has an additional function for computing the gradients of the FWI objective function `f,g = fwi_objective(model0,q[i],d_obs[i])`, which takes the current model, source and data vectors as an input and computes the objective value and gradient in parallel and without having to recompute the forward wavefields.
 
 ## Full-waveform inversion with JUDI
 
-With expressions for modeling operators, Jacobians and gradients of the FWI objective, we can now implement different FWI algorithms in a few lines of code. We will start with a basic gradient descent (GD) example with a line search. To reduce the computational cost of full gradient descent (GD), we will use a stochastic approach (SGD) in which we only compute the gradient and function value for a randomized subset of source locations. In JUDI, this is accomplished by choosing a random vector of integers between 1 and 97 and indexing the data vectors as described earlier. Furthermore, we will apply bound constraints to the updated model, to prevent velocities (or squared slownesses) to become negative or too large. Bound constraints are applied to the updated model trough a projection operator `proj(x)`, which clips values of the slowness that exceed their allowed range. The full algoritm for FWI with stochastic gradient descent and bound constraints is implemented as follows:
+With expressions for modeling operators, Jacobians and gradients of the FWI objective, we can now implement different FWI algorithms in a few lines of code. We will start with a basic gradient descent (GD) example with a line search. To reduce the computational cost of full gradient descent (GD), we will use a stochastic approach (SGD) in which we only compute the gradient and function value for a randomized subset of source locations. In JUDI, this is accomplished by choosing a random vector of integers between 1 and 31 and indexing the data vectors as described earlier. Furthermore, we will apply bound constraints to the updated model, to prevent velocities (or squared slownesses) to become negative or too large. Bound constraints are applied to the updated model trough a projection operator `proj(x)`, which clips values of the slowness that exceed their allowed range. The full algoritm for FWI with stochastic gradient descent and bound constraints is implemented as follows:
 
 ```julia
 maxiter = 20
 batchsize = 10	# number of shots for each iteration
-proj(x) = reshape(median([vec(mmin), vec(x), vec(mmax)]), model.n)
+proj(x) = reshape(median([vec(mmin) vec(x) vec(mmax)],2), model0.n)
 
 for j=1:maxiter
 	
@@ -111,11 +111,11 @@ for j=1:maxiter
 	fval, grad = fwi_objective(model0, q[i], d_obs[i])
 
 	# line search and update model
-	update = backtracking_linesearch(model0, q[i], dobs[i], fval, grad, proj; alpha=1f0)
-	model.m += reshape(update, model0.n)
+	update = backtracking_linesearch(model0, q[i], d_obs[i], fval, grad, proj; alpha=1f0)
+	model0.m += reshape(update, model0.n)
 
 	# apply bound constraints
-	model.m = proj(model0.m)
+	model0.m = proj(model0.m)
 end
 ```
 
@@ -169,9 +169,12 @@ This tutorial is based on Devito version 3.1.0. It requires the installation of 
 	source activate devito
 	pip install -e .
  
-Furthermore, users need to install the [JUDI] software package. To install, start a Julia session and run
+Furthermore, users need to install the [JUDI] software package, [JOLI](https://github.com/slimgroup/JOLI.jl) and [SeisIO]. These packages can be downloaded using the Julia package manager. From the Julia terminal run:
  
-	Pkg.add("JUDI.jl")
+	Pkg.clone("https://github.com/slimgroup/SeisIO.jl.git")
+	Pkg.clone("https://github.com/slimgroup/JOLI.jl.git")
+	Pkg.clone("https://github.com/slimgroup/JUDI.jl.git")
+
  
 ### Useful links
 
