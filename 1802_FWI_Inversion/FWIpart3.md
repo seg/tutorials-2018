@@ -99,8 +99,8 @@ In the context of seismic inversion, the Jacobian is also called the linearized 
 With expressions for modeling operators, Jacobians and gradients of the FWI objective, we can now implement different FWI algorithms in a few lines of code. We will start with a basic gradient descent (GD) example with a line search. To reduce the computational cost of full gradient descent (GD), we will use a stochastic approach (SGD) in which we only compute the gradient and function value for a randomized subset of source locations. In JUDI, this is accomplished by choosing a random vector of integers between 1 and 31 and indexing the data vectors as described earlier. Furthermore, we will apply box constraints to the updated model, to prevent velocities (or squared slownesses) to become negative or too large. Bound constraints are applied to the updated model trough a projection operator `proj(x)`, which clips values of the slowness that lie outside the allowed range. The full algoritm for FWI with stochastic gradient descent and box constraints is implemented as follows:
 
 ```julia
-maxiter = 20
-batchsize = 10	# number of shots for each iteration
+maxiter = 10
+batchsize = 8	# number of shots for each iteration
 proj(x) = reshape(median([vec(mmin) vec(x) vec(mmax)],2), model0.n)
 
 for j=1:maxiter
@@ -123,7 +123,7 @@ The function `backtracking_linesearch` performs an approximate line search and r
 #### Figure: {#result_SGD}
 ![](Figures/starting_model.png){width=80%} \
 ![](Figures/result_SGD.png){width=80%}
-: Initial model and recovered velocity model after 10 iterations of stochastic gradient descent with box constraints and a batch size of 10 shots.
+: Initial model and recovered velocity model after 10 iterations of stochastic gradient descent with box constraints and a batch size of 8 shots.
 
 As discussed earlier, the convergence rate of GD depends on the objective function, but is at best linear for full GD and sub-linear for stochastic GD, making many FWI iterations necessary to reach an acceptable solution. Using our matrix-free operator for the Jacobian `J`, we can modify the above code to implement the Gauss-Newton method (Equation #newton) to improve the convergence rate. In practice, directly inverting the Gauss-Newton Hessian `J'*J` should be avoided, because the matrix is badly conditioned and takes many iterations to invert. Instead, we perform a few iterations of `LSQR` to approximately solve `J*p = d_pred - d_obs` and obtain the update direction `p`. `LSQR` is a conjugate-gradient type algorithm for solving least squares problems and is mathematically equivalent to inverting `J'J`, but has better numerical properties [@paige1982]. In Julia, we implement the Gauss-Newton method with `LSQR` from the Julia `IterativeSolvers` package as follows:
 
@@ -137,7 +137,7 @@ for j=1:maxiter
 	d_pred = Pr*Ainv*Ps'*q
 		
 	# GN update direction
-	p = lsqr(J, d_pred - d_obs; maxiter=8)
+	p = lsqr(J, d_pred - d_obs; maxiter=6)
 	
 	# update model and box constraints
 	model0.m = proj(model0.m - reshape(p, model0.n))	# alpha=1
@@ -148,7 +148,7 @@ An important benefit of matrix-free operators is that we do not need to implemen
 
 #### Figure: {#result_GN}
 ![](Figures/result_GN.png){width=80%}
-: Recovered velocity model after 10 iterations of the Gauss-Newton method as shown above, with 8 iterations of `LSQR` for the GN subproblem and using all shots in every iteration.
+: Recovered velocity model after 10 iterations of the Gauss-Newton method as shown above, with 6 iterations of `LSQR` for the GN subproblem and using all shots in every iteration.
 
 #### Figure: {#convergence}
 ![](Figures/convergence.png){width=50%}
