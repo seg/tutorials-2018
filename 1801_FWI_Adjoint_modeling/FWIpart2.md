@@ -151,7 +151,7 @@ This tutorial is based on Devito version 3.1.0. It requires the installation of 
 
 - [Devito documentation](http://www.opesci.org/)
 - [Devito source code and examples](https://github.com/opesci/Devito)
-- [Tutorial notebooks with latest Devito/master](https://github.com/opesci/Devito/examples/seismic/tutorials)
+- [Tutorial notebooks with latest Devito/master](https://github.com/opesci/devito/tree/master/examples/seismic/tutorials)
 
 
 ## Acknowledgments
