@@ -169,11 +169,11 @@ This tutorial is based on Devito version 3.1.0. It requires the installation of 
 	source activate devito
 	pip install -e .
  
-Furthermore, users need to install the [JUDI] software package, [JOLI](https://github.com/slimgroup/JOLI.jl) and [SeisIO]. These packages can be downloaded using the Julia package manager. From the Julia terminal run:
+Furthermore, users need to install the [JUDI] software package v1.0, [JOLI](https://github.com/slimgroup/JOLI.jl) and [SeisIO]. These packages can be downloaded using the Julia package manager. From the Julia terminal run:
  
 	Pkg.clone("https://github.com/slimgroup/SeisIO.jl.git")
 	Pkg.clone("https://github.com/slimgroup/JOLI.jl.git")
-	Pkg.clone("https://github.com/slimgroup/JUDI.jl.git")
+	Pkg.clone("https://github.com/slimgroup/JUDI.jl.git", "v1.0")
 
  
 ### Useful links
