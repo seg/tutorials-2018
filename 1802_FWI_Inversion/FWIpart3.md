@@ -19,9 +19,9 @@ This tutorial is the third part of a full-waveform inversion (FWI) tutorial seri
 
 [Devito]:http://www.opesci.org/devito-public
 [Julia]:https://julialang.org
-[JUDI]:https://github.com/slimgroup/JUDI.jl
+[JUDI]:https://github.com/slimgroup/JUDI.jl/tree/tle_tutorial_jan_2018
 
-As an optimization problem, FWI can be quite challenging, both computationally and mathematically. The computational complexity comes from the fact that an already expensive solution procedure for the wave equation needs to be repeated for a large number of source positions for each iteration of the optimization algorithm. The mathematical complexity comes from the fact that the FWI objective is known to have many local minima due to cycle skipping. Furthermore, since the solution is not unique it is generally not possible to unambiguously recover the parametrization of the subsurface from the given data alone, making FWI an active field of research (e.g. Leeuwen et al., 2013; Warner and Guasch, 2014; Peters and Herrmann, 2017). This tutorial demonstrates how we can set up a basic FWI framework with gradient-based optimization algorithms, such as steepest descent and the Gauss-Newton method (Nocedal and Wright, 2009). Building a full FWI framework with routines for data IO and data parallelization is beyond the scope of a single tutorial, therefore we will implement our inversion framework with the [Julia Devito Inversion framework](https://github.com/slimgroup/JUDI.jl) (JUDI),  a parallel software package for seismic modeling and inversion in [Julia](Bezanson et al., 2012). JUDI provides abstractions and function wrappers that allow the implementation of wave-equation-based inversion problems such as FWI using code that closely follows the mathematical notation, while using Devito’s automatic code generation for solving the underlying wave equations.
+As an optimization problem, FWI can be quite challenging, both computationally and mathematically. The computational complexity comes from the fact that an already expensive solution procedure for the wave equation needs to be repeated for a large number of source positions for each iteration of the optimization algorithm. The mathematical complexity comes from the fact that the FWI objective is known to have many local minima due to cycle skipping. Furthermore, since the solution is not unique it is generally not possible to unambiguously recover the parametrization of the subsurface from the given data alone, making FWI an active field of research (e.g. Leeuwen et al., 2013; Warner and Guasch, 2014; Peters and Herrmann, 2017). This tutorial demonstrates how we can set up a basic FWI framework with gradient-based optimization algorithms, such as steepest descent and the Gauss-Newton method (Nocedal and Wright, 2009). Building a full FWI framework with routines for data IO and data parallelization is beyond the scope of a single tutorial, therefore we will implement our inversion framework with the [Julia Devito Inversion framework](https://github.com/slimgroup/JUDI.jl/tree/tle_tutorial_jan_2018) (JUDI),  a parallel software package for seismic modeling and inversion in [Julia](Bezanson et al., 2012). JUDI provides abstractions and function wrappers that allow the implementation of wave-equation-based inversion problems such as FWI using code that closely follows the mathematical notation, while using Devito’s automatic code generation for solving the underlying wave equations.
 
 ## Optimizing the full-waveform inversion objective function
 
@@ -173,7 +173,8 @@ Furthermore, users need to install the [JUDI] software package v1.0, [JOLI](http
  
 	Pkg.clone("https://github.com/slimgroup/SeisIO.jl.git")
 	Pkg.clone("https://github.com/slimgroup/JOLI.jl.git")
-	Pkg.clone("https://github.com/slimgroup/JUDI.jl.git", "v1.0")
+	Pkg.clone("https://github.com/slimgroup/JUDI.jl.git")
+	Pkg.checkout("JUDI","tle_tutorial_jan_2018")	# JUDI version for tutorial
 
  
 ### Useful links
