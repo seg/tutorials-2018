@@ -11,15 +11,15 @@ For more in-depth hints on getting started, see Hall, M (2016). A user guide to 
 - [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1801_FWI_Adjoint_modeling/notebook/Notebook.ipynb)
 
 ## February 2018
-- [FWI, part 3: Optimization](https://library.seg.org/doi/abs/10.1190/tle37020142.1)
+- [FWI, part 3: Optimization](https://library.seg.org/doi/abs/10.1190/tle37020142.1) by Philipp Witte, Mathias Louboutin, Keegan Lensink, Michael Lange, Navjot Kukreja, Fabio Luporini, Gerard Gorman, and Felix J. Herrmann
 - [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1802_FWI_Inversion/Notebook/Manuscript.ipynb)
 
 ## April 2018
-- [The conjugate gradient method](https://library.seg.org/doi/abs/10.1190/tle37040296.1) (inversion revisited)
+- [The conjugate gradient method](https://library.seg.org/doi/abs/10.1190/tle37040296.1) (inversion revisited) by Karl Schleicher
 - [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1804_Conjugate_gradient_inversion/conjugate_gradient_MS.ipynb)
 
 ## June 2018
-- [Time–frequency decomposition](https://library.seg.org/toc/leedff/37/6)
+- [Time–frequency decomposition](https://library.seg.org/toc/leedff/37/6) by Matt Hall
 - [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1806_Time-frequency/Manuscript.ipynb)
 - [Other Notebooks](https://github.com/seg/tutorials-2018/tree/master/1806_Time-frequency)
 
