@@ -7,13 +7,21 @@ Most of the tutorials contain [Jupyter Notebooks](https://jupyter.org/). They ca
 For more in-depth hints on getting started, see Hall, M (2016). A user guide to the geophysical tutorials. _The Leading Edge_ **35** (2), 190–191, doi: [10.1190/tle35020190.1](http://library.seg.org/doi/abs/10.1190/tle35020190.1).
 
 ## January 2018
-- FWI, part 2
+- [FWI, part 2: Adjont modeling](https://library.seg.org/doi/abs/10.1190/tle37010069.1) by Mathias Louboutin, Philipp Witte, Michael Lange, Navjot Kukreja, Fabio Luporini, Gerard Gorman, and Felix J. Herrmann
+- [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1801_FWI_Adjoint_modeling/notebook/Notebook.ipynb)
 
 ## February 2018
-- FWI, part 3
+- [FWI, part 3: Optimization](https://library.seg.org/doi/abs/10.1190/tle37020142.1)
+- [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1802_FWI_Inversion/Notebook/Manuscript.ipynb)
 
 ## April 2018
-- Machine learning: random forests
+- [The conjugate gradient method](https://library.seg.org/doi/abs/10.1190/tle37040296.1) (inversion revisited)
+- [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1804_Conjugate_gradient_inversion/conjugate_gradient_MS.ipynb)
+
+## June 2018
+- [Time–frequency decomposition](https://library.seg.org/toc/leedff/37/6)
+- [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1806_Time-frequency/Manuscript.ipynb)
+- [Other Notebooks](https://github.com/seg/tutorials-2018/tree/master/1806_Time-frequency)
 
 <hr />
 
