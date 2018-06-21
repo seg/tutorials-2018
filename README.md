@@ -23,8 +23,12 @@ For more in-depth hints on getting started, see Hall, M (2016). A user guide to 
 - [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1806_Time-frequency/Manuscript.ipynb)
 - [Other Notebooks](https://github.com/seg/tutorials-2018/tree/master/1806_Time-frequency)
 
+## August 2018
+- [Neural Networks]() by Graham Ganssle
+- [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_Network/manuscript.ipynb)
+
 <hr />
 
 The content of the articles and of the notebooks is © the author(s) and openly licensed [CC-BY-SA](https://creativecommons.org/licenses/by-sa/3.0/). The code is © the author(s) and openly licensed under the terms of the Apache License 2, or under the terms specified by the author, if any.
 
-Questions? [Get in touch!](mailto:matt@agilescientific.com) 
+Questions? [Get in touch!](mailto:matt@agilescientific.com)
