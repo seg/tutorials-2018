@@ -1,6 +1,6 @@
 # Neural Networks
 
-This tutorial serves as a deep look at the simplest of neural networks, the multilayer perceptron. The [manuscript notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_Network/manuscript.ipynb) uses no dependencies other than [Numpy](http://www.numpy.org/) to build up a neural network, train it to approximate a sine function, and then predict values inside (and outside) the domain of interest, [0, 2$\pi$].
+This tutorial serves as a deep look at the simplest of neural networks, the multilayer perceptron. The [manuscript notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_Network/manuscript.ipynb) uses no dependencies other than [Numpy](http://www.numpy.org/) to build up a neural network, train it to approximate a sine function, and then predict values inside (and outside) the domain of interest, [0, 2 $\pi$].
 
 There's a code block which uses [tqdm](https://pypi.org/project/tqdm/) to render a progress bar to screen during training. To install tqdm:
 
