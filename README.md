@@ -24,8 +24,8 @@ For more in-depth hints on getting started, see Hall, M (2016). A user guide to 
 - [Other Notebooks](https://github.com/seg/tutorials-2018/tree/master/1806_Time-frequency)
 
 ## August 2018
-- [Neural Networks]() by Graham Ganssle
-- [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_Network/manuscript.ipynb)
+- [Neural networks]() by Graham Ganssle
+- [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_networks/Manuscript.ipynb)
 
 <hr />
 
