@@ -1,0 +1,10 @@
+name: nnet
+channels:
+  - defaults
+dependencies:
+  - matplotlib
+  - scikit-learn
+  - pip:
+    - tqdm
+    - welly
+    - bruges
