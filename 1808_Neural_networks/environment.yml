@@ -3,6 +3,7 @@ channels:
   - defaults
 dependencies:
   - numpy
+  - scipy
   - matplotlib
   - scikit-learn
   - pip:
