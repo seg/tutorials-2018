@@ -12,9 +12,9 @@ class Manuscript:
     """
     Something to handle making figures with figure numbers.
     """
-    def __init__(self, loc=None):
+    def __init__(self, loc=None, start=None):
         self.loc = loc or ''
-        self.fignum = 1
+        self.fignum = start or 1
         self.figures = {}
 
     def savefig(self, figure, name):

@@ -1,7 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+Useful functions for writing manuscripts in a Notebook.
+
+:copyright: 2016 Agile Geoscience
+:license: Apache 2.0
+"""
 import os
 
+
 class Manuscript:
-    """Something to handle making figures with figure numbers.
+    """
+    Something to handle making figures with figure numbers.
     """
     def __init__(self, loc=None):
         self.loc = loc or ''
@@ -9,6 +18,10 @@ class Manuscript:
         self.figures = {}
 
     def savefig(self, figure, name):
+        """
+        Wraps fig.savefig() to automatically keep track of figure numbers.
+        Just pass a name instead when you call it.
+        """
         if not os.path.exists(self.loc):
             os.makedirs(self.loc)
         fname = self.figures.get(name)
