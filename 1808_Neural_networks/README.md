@@ -2,7 +2,7 @@
 
 ### Quick start
 
-[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/seg/tutorials-2018/master?filepath=blob%2Fmaster%2F1808_Neural_networks%2FManuscript.ipynb)
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/seg/tutorials-2018/master?filepath=1808_Neural_networks%2FManuscript.ipynb)
 
 
 ### Build your own environment
