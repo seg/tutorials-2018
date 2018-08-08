@@ -6,6 +6,7 @@ dependencies:
   - scipy
   - matplotlib
   - scikit-learn
+  - seaborn
   - pip:
     - tqdm
     - welly
