@@ -17,15 +17,18 @@ For more in-depth hints on getting started, see Hall, M (2016). A user guide to 
 ## April 2018
 - [The conjugate gradient method](https://library.seg.org/doi/abs/10.1190/tle37040296.1) (inversion revisited) by Karl Schleicher
 - [Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1804_Conjugate_gradient_inversion/conjugate_gradient_MS.ipynb)
+- [Run the Notebook](https://mybinder.org/v2/gh/seg/tutorials-2018/master?filepath=1804_Conjugate_gradient_inversion%2Fconjugate_gradient_MS.ipynb) live in your browser!
 
 ## June 2018
 - [Time–frequency decomposition](https://library.seg.org/toc/leedff/37/6) by Matt Hall
 - [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1806_Time-frequency/Manuscript.ipynb)
+- [Run the Notebook](https://mybinder.org/v2/gh/seg/tutorials-2018/master?filepath=1806_Time-frequency%2FManuscript.ipynb) live in your browser!
 - [Other Notebooks](https://github.com/seg/tutorials-2018/tree/master/1806_Time-frequency)
 
 ## August 2018
 - [Neural networks](https://library.seg.org/doi/abs/10.1190/tle37080616.1) by Graham Ganssle
 - [Manuscript as Jupyter Notebook](https://github.com/seg/tutorials-2018/blob/master/1808_Neural_networks/Manuscript.ipynb)
+- [Run the Notebook](https://mybinder.org/v2/gh/seg/tutorials-2018/master?filepath=1808_Neural_networks%2FManuscript.ipynb) live in your browser!
 
 <hr />
 
